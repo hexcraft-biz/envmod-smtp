@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/hexcraft-biz/misc/resp"
+	"github.com/hexcraft-biz/her"
 )
 
 // ================================================================
@@ -22,7 +22,7 @@ type Smtp struct {
 	DisplayEmail string
 }
 
-func New() (*Smtp, *resp.Resp) {
+func New() (*Smtp, *her.Error) {
 	return &Smtp{
 		Host:         os.Getenv("SMTP_HOST"),
 		Port:         os.Getenv("SMTP_PORT"),
@@ -36,7 +36,7 @@ func New() (*Smtp, *resp.Resp) {
 // ================================================================
 //
 // ================================================================
-func (e Smtp) SendHTMLEmail(to []string, subject, body string) *resp.Resp {
+func (e Smtp) SendHTMLEmail(to []string, subject, body string) *her.Error {
 	server := e.Host + ":" + e.Port
 	auth := smtp.PlainAuth("", e.Username, e.Password, e.Host)
 
@@ -49,5 +49,5 @@ func (e Smtp) SendHTMLEmail(to []string, subject, body string) *resp.Resp {
 	}
 
 	err := smtp.SendMail(server, auth, e.Username, to, []byte(strings.Join(msgs, "\n")))
-	return resp.NewError(http.StatusInternalServerError, err, nil)
+	return her.NewError(http.StatusInternalServerError, err, nil)
 }
