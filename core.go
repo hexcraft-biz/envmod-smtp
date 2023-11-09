@@ -20,16 +20,14 @@ type Smtp struct {
 }
 
 func New() (*Smtp, error) {
-	smtp := &Smtp{
+	return &Smtp{
 		Host:         os.Getenv("SMTP_HOST"),
 		Port:         os.Getenv("SMTP_PORT"),
 		Username:     os.Getenv("SMTP_USERNAME"),
 		Password:     os.Getenv("SMTP_PASSWORD"),
 		DisplayName:  os.Getenv("SMTP_DISPLAY_NAME"),
 		DisplayEmail: os.Getenv("SMTP_DISPLAY_EMAIL"),
-	}
-
-	return smtp, nil
+	}, nil
 }
 
 // ================================================================
