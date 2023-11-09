@@ -2,12 +2,9 @@ package smtp
 
 import (
 	"fmt"
-	"net/http"
 	"net/smtp"
 	"os"
 	"strings"
-
-	"github.com/hexcraft-biz/her"
 )
 
 // ================================================================
@@ -22,21 +19,23 @@ type Smtp struct {
 	DisplayEmail string
 }
 
-func New() (*Smtp, *her.Error) {
-	return &Smtp{
+func New() (*Smtp, error) {
+	smtp := &Smtp{
 		Host:         os.Getenv("SMTP_HOST"),
 		Port:         os.Getenv("SMTP_PORT"),
 		Username:     os.Getenv("SMTP_USERNAME"),
 		Password:     os.Getenv("SMTP_PASSWORD"),
 		DisplayName:  os.Getenv("SMTP_DISPLAY_NAME"),
 		DisplayEmail: os.Getenv("SMTP_DISPLAY_EMAIL"),
-	}, nil
+	}
+
+	return smtp, nil
 }
 
 // ================================================================
 //
 // ================================================================
-func (e Smtp) SendHTMLEmail(to []string, subject, body string) *her.Error {
+func (e Smtp) SendHTMLEmail(to []string, subject, body string) error {
 	server := e.Host + ":" + e.Port
 	auth := smtp.PlainAuth("", e.Username, e.Password, e.Host)
 
@@ -48,6 +47,5 @@ func (e Smtp) SendHTMLEmail(to []string, subject, body string) *her.Error {
 		body,
 	}
 
-	err := smtp.SendMail(server, auth, e.Username, to, []byte(strings.Join(msgs, "\n")))
-	return her.NewError(http.StatusInternalServerError, err, nil)
+	return smtp.SendMail(server, auth, e.Username, to, []byte(strings.Join(msgs, "\n")))
 }
