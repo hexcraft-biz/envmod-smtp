@@ -2,9 +2,12 @@ package smtp
 
 import (
 	"fmt"
+	"net/http"
 	"net/smtp"
 	"os"
 	"strings"
+
+	"github.com/hexcraft-biz/her"
 )
 
 // ================================================================
@@ -33,7 +36,7 @@ func New() (*Smtp, error) {
 // ================================================================
 //
 // ================================================================
-func (e Smtp) SendHTMLEmail(to []string, subject, body string) error {
+func (e Smtp) SendHTMLEmail(to []string, subject, body string) her.Error {
 	server := e.Host + ":" + e.Port
 	auth := smtp.PlainAuth("", e.Username, e.Password, e.Host)
 
@@ -45,5 +48,6 @@ func (e Smtp) SendHTMLEmail(to []string, subject, body string) error {
 		body,
 	}
 
-	return smtp.SendMail(server, auth, e.Username, to, []byte(strings.Join(msgs, "\n")))
+	err := smtp.SendMail(server, auth, e.Username, to, []byte(strings.Join(msgs, "\n")))
+	return her.NewError(http.StatusInternalServerError, err, nil)
 }
