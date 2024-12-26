@@ -37,7 +37,11 @@ func (e Smtp) SendHTMLEmail(to []string, bcc []string, subject, body string) err
 	server := e.Host + ":" + e.Port
 	auth := smtp.PlainAuth("", e.Username, e.Password, e.Host)
 
-	recipients := append(to, bcc...)
+	recipients := to
+	if len(bcc) > 0 {
+		recipients = append(to, bcc...)
+	}
+
 	msgs := []string{
 		`MIME-version: 1.0;`,
 		`Content-Type: text/html; charset="UTF-8";`,
